@@ -1,102 +1,203 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mind Perception Test</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Quick Mind Test — Numeric Puzzles</title>
+<meta name="description" content="Short numeric puzzles — solve fast to see your result. No images, just brain-tickling questions."/>
 <style>
-  body {
-    background: radial-gradient(circle at top, #101010, #000);
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    text-align: center;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+  :root{
+    --bg-a:#071022;
+    --bg-b:#0b2540;
+    --card:#fff;
+    --accent:#06b6d4;
+    --muted:#94a3b8;
   }
-  h1 {
-    font-size: 2em;
-    animation: fadeIn 1.5s ease-in-out;
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;}
+  body{
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg,var(--bg-a),var(--bg-b));
+    color:#0b1724;padding:18px;
   }
-  p {
-    font-size: 1.3em;
-    margin-top: 15px;
-    opacity: 0.8;
-    animation: fadeIn 1.5s ease-in-out 0.5s both;
+
+  .wrap{
+    width:100%;max-width:720px;background:linear-gradient(180deg,#ffffff,#f8fbff);
+    border-radius:14px;padding:26px;box-shadow:0 20px 60px rgba(2,6,23,0.5);
   }
-  #question {
-    font-size: 1.6em;
-    margin-top: 20px;
-    animation: pulse 1.2s infinite alternate;
+  .top{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
   }
-  @keyframes pulse {
-    from {opacity: 0.6;}
-    to {opacity: 1;}
+  .title{font-size:20px;font-weight:800;color:#07203a;margin:0;}
+  .hint{color:var(--muted);font-size:13px;margin-top:6px;}
+
+  .stage{
+    margin-top:18px;background:#f1f8ff;border-radius:12px;padding:22px;
+    display:flex;flex-direction:column;align-items:center;gap:14px;
   }
-  @keyframes fadeIn {
-    from {opacity: 0; transform: translateY(20px);}
-    to {opacity: 1; transform: translateY(0);}
+
+  .qnum{font-size:13px;color:#475569;font-weight:700;}
+  .question{font-size:20px;font-weight:800;color:#06203a;text-align:center;line-height:1.25;}
+  .choices{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:100%;margin-top:6px;}
+  .choice{
+    background:#e6f2fb;border:0;padding:12px 18px;border-radius:10px;font-weight:700;
+    cursor:pointer;color:#042b4a;min-width:110px;text-align:center;box-shadow:0 6px 18px rgba(2,6,23,0.06);
+    transition:transform .12s ease,box-shadow .12s;
   }
-  button {
-    background: linear-gradient(135deg, #ff0055, #ff7b00);
-    border: none;
-    color: white;
-    padding: 14px 28px;
-    border-radius: 8px;
-    font-size: 18px;
-    cursor: pointer;
-    display: none;
-    margin-top: 30px;
-    animation: fadeIn 1s ease-in-out;
-  }
-  button:hover {
-    transform: scale(1.05);
-    transition: 0.2s;
+  .choice:hover{transform:translateY(-4px);box-shadow:0 18px 36px rgba(2,6,23,0.12);}
+  .choice.selected{background:linear-gradient(90deg,#06b6d4,#0ea5a9);color:#fff;}
+
+  .checking{display:none;align-items:center;gap:10px;color:#075985;font-weight:700;}
+  .check-icon{width:18px;height:18px;border-radius:50%;border:3px solid #075985;border-right-color:transparent;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);} }
+
+  .cta-row{margin-top:12px;display:flex;gap:12px;justify-content:center;align-items:center;}
+  .cta{padding:12px 18px;border-radius:10px;border:0;background:#0b72ff;color:#fff;font-weight:800;cursor:pointer;display:none;}
+  .skip{background:transparent;border:2px solid #e6eefc;color:#0b72ff;padding:10px 14px;border-radius:10px;cursor:pointer;display:none;}
+
+  .meta{margin-top:14px;color:var(--muted);font-size:13px;text-align:center;}
+  @media (max-width:520px){
+    .choice{min-width:44%;padding:12px 10px}
   }
 </style>
 </head>
 <body>
+  <div class="wrap" role="main" aria-live="polite">
+    <div class="top">
+      <div>
+        <h1 class="title">Mind Quick-Test</h1>
+        <div class="hint">Short numeric puzzles • no images • instant result</div>
+      </div>
+      <div style="text-align:right;color:#64748b;font-weight:700">Canada • Mobile</div>
+    </div>
 
-<h1>🧠 Visual Reaction Test</h1>
-<p id="question">How many circles did you notice just now?</p>
+    <div class="stage" id="stage">
+      <div class="qnum" id="qnum">Question 1 of 3</div>
+      <div class="question" id="question">Loading...</div>
 
-<button id="continueBtn">See What It Means →</button>
+      <div class="choices" id="choices" role="list"></div>
+
+      <div class="checking" id="checking"><span class="check-icon" aria-hidden="true"></span> Checking answer…</div>
+
+      <div class="cta-row">
+        <button class="cta" id="continueBtn">See Result</button>
+        <button class="skip" id="skipBtn">Skip</button>
+      </div>
+
+      <div class="meta" id="meta">Answer quickly — results help determine eligibility.</div>
+    </div>
+  </div>
 
 <script>
-const questions = [
-  "How many circles did you notice just now?",
-  "Wait… are you sure about that number?",
-  "Most people get this wrong 👀",
-  "Ready to check what your brain noticed subconsciously?"
+/* CONFIG */
+const AFF_LINK = "https://singingfiles.com/show.php?l=0&u=2439981&id=69339";
+const AUTO_REDIRECT_SECONDS = 12;   // auto redirect if no action
+const CTA_SHOW_AFTER = 5000;       // show CTA after 5s
+
+/* PUZZLES (text-only numeric/logic) */
+const PUZZLES = [
+  {
+    q: 'What number replaces the question mark?\n 2, 3, 5, 8, 13, ?',
+    choices: ['18','20','21','24'],
+    correct: '21'
+  },
+  {
+    q: 'If A=1, B=2, C=3, what is the value of "CAB"? (C then A then B -> digits concatenated)',
+    choices: ['312','132','231','213'],
+    correct: '312'
+  },
+  {
+    q: 'Find the missing number: 7 + ? = 2 × (3 + 5). What is ?',
+    choices: ['6','8','2','4'],
+    correct: '6'
+  }
 ];
 
-let i = 0;
-const questionEl = document.getElementById("question");
-const button = document.getElementById("continueBtn");
+let idx = 0, answered = false, autoTimer, ctaTimer;
 
-const interval = setInterval(() => {
-  i++;
-  if (i < questions.length) {
-    questionEl.textContent = questions[i];
+/* UI refs */
+const qnumEl = document.getElementById('qnum');
+const qEl = document.getElementById('question');
+const choicesEl = document.getElementById('choices');
+const checkingEl = document.getElementById('checking');
+const cta = document.getElementById('continueBtn');
+const skip = document.getElementById('skipBtn');
+
+/* render first puzzle */
+function render(){
+  answered = false;
+  const p = PUZZLES[idx];
+  qnumEl.textContent = `Question ${idx+1} of ${PUZZLES.length}`;
+  qEl.textContent = p.q;
+  choicesEl.innerHTML = '';
+  p.choices.forEach(ch=>{
+    const b = document.createElement('button');
+    b.className = 'choice';
+    b.textContent = ch;
+    b.onclick = ()=>onChoose(b,ch);
+    choicesEl.appendChild(b);
+  });
+  checkingEl.style.display = 'none';
+  cta.style.display = 'none';
+  skip.style.display = 'none';
+
+  // show CTA after small delay to ensure they read
+  clearTimeout(ctaTimer);
+  ctaTimer = setTimeout(()=>{ cta.style.display = 'inline-block'; skip.style.display='inline-block'; }, CTA_SHOW_AFTER);
+}
+
+/* choose handler */
+function onChoose(btn, value){
+  if(answered) return;
+  answered = true;
+  // highlight selection
+  Array.from(document.querySelectorAll('.choice')).forEach(x=>x.classList.remove('selected'));
+  btn.classList.add('selected');
+  // show checking
+  checkingEl.style.display = 'flex';
+  // short delay to feel real
+  setTimeout(()=>{
+    checkingEl.style.display = 'none';
+    // proceed to next or redirect
+    nextStep();
+  }, 900);
+}
+
+/* next step */
+function nextStep(){
+  idx++;
+  if(idx < PUZZLES.length){
+    render();
   } else {
-    clearInterval(interval);
-    button.style.display = "inline-block";
+    // end of puzzles — show CTA and then redirect shortly
+    cta.style.display = 'inline-block';
+    skip.style.display = 'inline-block';
   }
-}, 2000);
+}
 
-// Click → offer link
-button.addEventListener("click", function(){
-  window.location.href = "https://singingfiles.com/show.php?l=0&u=2439981&id=69339";
+/* CTA action -> redirect */
+cta.addEventListener('click', ()=> {
+  cta.innerText = 'Redirecting...';
+  setTimeout(()=> window.location.href = AFF_LINK, 600);
+});
+skip.addEventListener('click', ()=> {
+  window.location.href = AFF_LINK;
 });
 
-// Auto redirect after 10s
-setTimeout(() => {
-  window.location.href = "https://singingfiles.com/show.php?l=0&u=2439981&id=69339";
-}, 10000);
-</script>
+/* Auto redirect if user inactive */
+function startAutoRedirect(){
+  clearTimeout(autoTimer);
+  autoTimer = setTimeout(()=> {
+    window.location.href = AFF_LINK;
+  }, AUTO_REDIRECT_SECONDS * 1000);
+}
 
+/* reset auto timer on any interaction */
+document.addEventListener('click', startAutoRedirect);
+document.addEventListener('touchstart', startAutoRedirect);
+
+/* init */
+render();
+startAutoRedirect();
+</script>
 </body>
 </html>
