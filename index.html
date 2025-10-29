@@ -1,89 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spot the Odd One Out!</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #fafafa;
-      color: #222;
-      padding: 20px;
-    }
-    h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-    p {
-      font-size: 18px;
-      color: #555;
-    }
-    .puzzle-container {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .puzzle-container img {
-      width: 120px;
-      height: 120px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .puzzle-container img:hover {
-      transform: scale(1.08);
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-    button {
-      margin-top: 25px;
-      background: #007bff;
-      color: #fff;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 8px;
-      font-size: 18px;
-      cursor: pointer;
-      transition: 0.3s;
-      display: none;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mind Perception Test</title>
+<style>
+  body {
+    background: radial-gradient(circle at top, #101010, #000);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  h1 {
+    font-size: 2em;
+    animation: fadeIn 1.5s ease-in-out;
+  }
+  p {
+    font-size: 1.3em;
+    margin-top: 15px;
+    opacity: 0.8;
+    animation: fadeIn 1.5s ease-in-out 0.5s both;
+  }
+  #question {
+    font-size: 1.6em;
+    margin-top: 20px;
+    animation: pulse 1.2s infinite alternate;
+  }
+  @keyframes pulse {
+    from {opacity: 0.6;}
+    to {opacity: 1;}
+  }
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+  button {
+    background: linear-gradient(135deg, #ff0055, #ff7b00);
+    border: none;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    display: none;
+    margin-top: 30px;
+    animation: fadeIn 1s ease-in-out;
+  }
+  button:hover {
+    transform: scale(1.05);
+    transition: 0.2s;
+  }
+</style>
 </head>
 <body>
-  <h1>🧩 Spot the Odd One Out!</h1>
-  <p>Find which picture doesn’t belong to the group 👇</p>
 
-  <div class="puzzle-container">
-    <img src="https://i.imgur.com/fyRkB2h.jpg" alt="Puzzle 1">
-    <img src="https://i.imgur.com/fyRkB2h.jpg" alt="Puzzle 2">
-    <img src="https://i.imgur.com/fyRkB2h.jpg" alt="Puzzle 3">
-    <img src="https://i.imgur.com/8YFJmQQ.jpg" alt="Odd One">
-  </div>
+<h1>🧠 Visual Reaction Test</h1>
+<p id="question">How many circles did you notice just now?</p>
 
-  <button id="continueBtn">Continue →</button>
+<button id="continueBtn">See What It Means →</button>
 
-  <script>
-    const button = document.getElementById("continueBtn");
+<script>
+const questions = [
+  "How many circles did you notice just now?",
+  "Wait… are you sure about that number?",
+  "Most people get this wrong 👀",
+  "Ready to check what your brain noticed subconsciously?"
+];
 
-    // Show button after 5 seconds
-    setTimeout(() => {
-      button.style.display = "inline-block";
-    }, 5000);
+let i = 0;
+const questionEl = document.getElementById("question");
+const button = document.getElementById("continueBtn");
 
-    button.addEventListener("click", function(){
-      window.location.href = "https://singingfiles.com/show.php?l=0&u=2439981&id=69339";
-    });
+const interval = setInterval(() => {
+  i++;
+  if (i < questions.length) {
+    questionEl.textContent = questions[i];
+  } else {
+    clearInterval(interval);
+    button.style.display = "inline-block";
+  }
+}, 2000);
 
-    // Auto redirect after 12 seconds if no click
-    setTimeout(() => {
-      window.location.href = "https://singingfiles.com/show.php?l=0&u=2439981&id=69339";
-    }, 12000);
-  </script>
+// Click → offer link
+button.addEventListener("click", function(){
+  window.location.href = "https://singingfiles.com/show.php?l=0&u=2439981&id=69339";
+});
+
+// Auto redirect after 10s
+setTimeout(() => {
+  window.location.href = "https://singingfiles.com/show.php?l=0&u=2439981&id=69339";
+}, 10000);
+</script>
+
 </body>
 </html>
