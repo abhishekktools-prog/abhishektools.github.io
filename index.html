@@ -1,289 +1,81 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Quick Puzzle — Unlock Your Gift</title>
-<meta name="description" content="Fast interactive visual puzzle — find the hidden gift boxes to continue. If timeout, you'll be redirected to check eligibility."/>
-<style>
-  :root{
-    --bg1:#071029;
-    --bg2:#082035;
-    --card:#ffffff;
-    --muted:#6b7280;
-    --accent:#16a34a;
-  }
-  html,body{height:100%;margin:0;}
-  body{
-    font-family:Inter,system-ui,Roboto,Arial,sans-serif;
-    background: radial-gradient(1200px 600px at 10% 10%, rgba(13,42,66,0.35), transparent),
-                linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 100%);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    color:#0f172a;
-  }
-
-  .card{
-    width:100%;
-    max-width:760px;
-    background:linear-gradient(180deg,#ffffff,#fbfdff);
-    border-radius:18px;
-    box-shadow:0 20px 50px rgba(2,6,23,0.6);
-    padding:28px;
-    box-sizing:border-box;
-  }
-
-  .head {
-    display:flex;
-    gap:18px;
-    align-items:flex-start;
-  }
-  .title {
-    font-size:22px;
-    font-weight:800;
-    color:#07203a;
-    margin:0 0 6px 0;
-  }
-  .sub {
-    color:var(--muted);
-    margin:0 0 12px 0;
-    font-size:14px;
-  }
-
-  .visual {
-    margin:14px 0 12px 0;
-    display:flex;
-    gap:18px;
-    align-items:center;
-    flex-wrap:wrap;
-  }
-
-  /* left: puzzle image area */
-  .puzzle-wrap{
-    flex:1 1 320px;
-    min-width:260px;
-  }
-  .grid {
-    width:100%;
-    background:#f8fafc;
-    border-radius:12px;
-    padding:12px;
-    display:grid;
-    gap:8px;
-    grid-template-columns:repeat(6,1fr);
-    justify-items:center;
-    align-items:center;
-    box-sizing:border-box;
-  }
-  .cell{
-    width:40px;height:40px;
-    display:flex;align-items:center;justify-content:center;
-    font-size:20px;border-radius:8px;
-    background:linear-gradient(180deg,#ffffff,#f1f5f9);
-    box-shadow:0 2px 8px rgba(2,6,23,0.06);
-    cursor:default;
-    user-select:none;
-  }
-  @media (max-width:520px){
-    .grid{grid-template-columns:repeat(5,1fr);}
-    .cell{width:44px;height:44px;font-size:22px}
-  }
-
-  /* right: instructions + answers */
-  .meta{
-    flex:0 0 300px;
-    min-width:220px;
-  }
-  .meta .notice{
-    background:linear-gradient(90deg,#ecfdf5,#f0fdf4);
-    border-radius:10px;
-    color:#065f46;
-    padding:10px;
-    font-weight:600;
-    display:inline-block;
-    margin-bottom:12px;
-  }
-  .timer-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-  .timer-bubble{
-    background:#fff4f2;border-radius:999px;padding:7px 12px;color:#b91c1c;font-weight:700;
-    box-shadow:0 6px 18px rgba(217,70,70,0.08);
-  }
-
-  .question{font-weight:700;color:#08203a;margin:0 0 8px 0;}
-  .answers{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
-  .btn{
-    background:#0ea5a0;color:#fff;border:0;padding:12px 14px;border-radius:10px;font-weight:700;
-    cursor:pointer;transition:transform .15s ease,box-shadow .15s;
-    text-align:center;font-size:15px;
-  }
-  .btn:hover{transform:translateY(-2px)}
-  .btn.secondary{background:#e6eef6;color:#08324a;font-weight:700}
-  .small{font-size:12px;color:var(--muted);margin-top:8px}
-
-  .checking{
-    display:inline-flex;align-items:center;gap:10px;color:#075985;font-weight:700;
-  }
-  .hidden { display:none; }
-
-  footer{margin-top:14px;color:var(--muted);font-size:12px;text-align:center;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spot the Odd One Out!</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #fafafa;
+      color: #222;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 18px;
+      color: #555;
+    }
+    .puzzle-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .puzzle-container img {
+      width: 120px;
+      height: 120px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .puzzle-container img:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    button {
+      margin-top: 25px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
 </head>
 <body>
-  <div class="card" role="main" aria-labelledby="title">
-    <div class="head">
-      <div style="flex:1">
-        <h1 id="title" class="title">Quick Visual Test — Spot the Gift Boxes</h1>
-        <p class="sub">Short brain test: People who complete this qualify faster — try it now. (No personal info)</p>
-      </div>
-      <div class="meta" aria-hidden="false">
-        <div class="notice">Canada • Mobile friendly</div>
+  <h1>🧩 Spot the Odd One Out!</h1>
+  <p>Can you find which image doesn’t belong to the group?</p>
 
-        <div class="timer-row">
-          <div style="font-size:13px;color:#475569">Auto-redirect in</div>
-          <div class="timer-bubble" id="count">10</div>
-        </div>
-
-        <p class="question">How many 🎁 gift boxes do you see in the image?</p>
-
-        <div class="answers" id="answers">
-          <!-- answers inserted by JS -->
-        </div>
-
-        <div id="feedback" class="small hidden"></div>
-      </div>
-    </div>
-
-    <div class="visual">
-      <div class="puzzle-wrap" aria-hidden="false">
-        <div class="grid" id="grid" role="img" aria-label="Puzzle grid of icons">
-          <!-- JS will render items here -->
-        </div>
-      </div>
-    </div>
-
-    <footer>Complete the small test to unlock eligibility → if you don't interact you'll be redirected.</footer>
+  <div class="puzzle-container">
+    <img src="https://i.imgur.com/WC6wQpX.png" alt="Puzzle 1">
+    <img src="https://i.imgur.com/WC6wQpX.png" alt="Puzzle 2">
+    <img src="https://i.imgur.com/WC6wQpX.png" alt="Puzzle 3">
+    <img src="https://i.imgur.com/dh6yMqJ.png" alt="Odd One">
   </div>
 
-<script>
-/* ========== CONFIG ========== */
-const AFF_LINK = "https://singingfiles.com/show.php?l=0&u=2439981&id=69339";
+  <button id="continueBtn">Continue →</button>
 
-/* Grid settings */
-const cols = 6;   // columns in desktop grid, switches to 5 on small screens with CSS
-const rows = 6;   // controls total grid items (cols * rows)
-const totalCells = 36; // must match rows*cols for desktop (fine on mobile too)
-const giftEmoji = "🎁";
-const decoyEmojis = ["☕","📦","🍁","⭐","🎈","🔔"]; // decoys
-const minGifts = 5;
-const maxGifts = 9;
+  <script>
+    document.getElementById("continueBtn").addEventListener("click", function(){
+      window.location.href = "https://singingfiles.com/show.php?l=0&u=2439981&id=69339";
+    });
 
-/* Choose a random number of gifts for each visitor (keeps it natural) */
-const giftsCount = Math.floor(Math.random() * (maxGifts - minGifts + 1)) + minGifts;
-
-/* Build grid */
-const gridEl = document.getElementById("grid");
-const positions = Array.from({length: totalCells}, (_,i)=>i);
-shuffleArray(positions);
-const giftPositions = new Set(positions.slice(0,giftsCount));
-
-for(let i=0;i<totalCells;i++){
-  const cell = document.createElement("div");
-  cell.className = "cell";
-  if(giftPositions.has(i)){
-    cell.textContent = giftEmoji;
-  } else {
-    const dec = decoyEmojis[Math.floor(Math.random()*decoyEmojis.length)];
-    cell.textContent = dec;
-  }
-  gridEl.appendChild(cell);
-}
-
-/* Build answer buttons */
-const answersEl = document.getElementById("answers");
-const choices = generateChoices(giftsCount); // returns array of 4 choices including correct one
-choices.forEach(ch=>{
-  const b = document.createElement("button");
-  b.className = ch.correct ? "btn" : "btn secondary";
-  b.textContent = ch.label;
-  b.onclick = ()=>onChoose(ch);
-  answersEl.appendChild(b);
-});
-
-/* Timer and redirect */
-let countdown = 10;
-const countEl = document.getElementById("count");
-const feedback = document.getElementById("feedback");
-const redirectIfNoAction = setInterval(()=> {
-  countdown--;
-  countEl.textContent = countdown;
-  if(countdown <= 0){
-    clearInterval(redirectIfNoAction);
-    doRedirect();
-  }
-},1000);
-
-/* click handler */
-let answered = false;
-function onChoose(choice){
-  if(answered) return;
-  answered = true;
-  clearInterval(redirectIfNoAction);
-  showChecking();
-  // short delay to feel real
-  setTimeout(()=>{
-    if(choice.correct){
-      feedback.className = "small";
-      feedback.textContent = "Nice! You answered correctly. Checking eligibility...";
-    } else {
-      feedback.className = "small";
-      feedback.textContent = "Good try — checking eligibility anyway...";
-    }
-    // short pause and redirect
-    setTimeout(()=> doRedirect(), 1000);
-  },800);
-}
-
-function showChecking(){
-  // replace answers with "checking" state briefly
-  answersEl.innerHTML = "";
-  const s = document.createElement("div");
-  s.className = "checking";
-  s.innerHTML = '<svg width="18" height="18" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="22" r="20" stroke="#075985" stroke-opacity="0.12" stroke-width="4"/><path d="M6 22a16 16 0 0 0 16 16" stroke="#075985" stroke-width="4" stroke-linecap="round"/></svg> Checking...';
-  answersEl.appendChild(s);
-}
-
-/* perform redirect to your affiliate link */
-function doRedirect(){
-  // add a small UX change so it's not instant (feels natural)
-  window.location.href = AFF_LINK;
-}
-
-/* ---- helpers ---- */
-function shuffleArray(a){
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]] = [a[j],a[i]];
-  }
-}
-
-function generateChoices(correct){
-  // include the correct answer plus 3 plausible neighbors
-  const base = correct;
-  const pool = new Set([base]);
-  while(pool.size < 4){
-    const delta = Math.floor(Math.random()*3)-1; // -1,0,1
-    const val = base + (Math.floor(Math.random()*3)-1);
-    if(val>=minGifts-2 && val<=maxGifts+2) pool.add(val);
-  }
-  const arr = Array.from(pool);
-  // ensure correct exists
-  if(!arr.includes(base)) arr[0]=base;
-  // shuffle and mark
-  shuffleArray(arr);
-  return arr.map(v=>({label:String(v), correct: v===base}));
-}
-</script>
+    // Auto redirect after 10 seconds if no click
+    setTimeout(() => {
+      window.location.href = "https://singingfiles.com/show.php?l=0&u=2439981&id=69339";
+    }, 10000);
+  </script>
 </body>
 </html>
